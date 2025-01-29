@@ -13,7 +13,7 @@ class SuperWalletzService
     public function __construct()
     {
         $this->client = new Client([
-            'base_uri' => 'http://localhost:3003', // URL del servidor de SuperWalletz
+            'base_uri' => env('SUPERWALLETZ_BASE_URI'), // URL del servidor de SuperWalletz
             'timeout' => 5.0,
         ]);
     }

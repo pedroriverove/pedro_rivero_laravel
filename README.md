@@ -1,58 +1,134 @@
-**Prueba Técnica Laravel: Integración de Sistemas de Pago**
+# Laravel
 
-### Descripción General:
+## Requirements
 
-En esta prueba deberás implementar la integración de dos sistemas de pago ficticios utilizando Laravel. Los dos sistemas de pago serán:
+This uses Laravel 11.x, Please make sure your server meets the requirements before installing.
+- PHP >= 8.2
+- Composer
 
-1. **Pago EasyMoney**
-2. **Pago SuperWalletz**
+## Installation
 
-### Requisitos
-
-#### 1. Pago EasyMoney
-
-- Deberás integrar el sistema de pago ficticio EasyMoney con Laravel. Esta es la documentación de la API de EasyMoney:
-  
-- Debes hacer una llamada POST a la siguiente URL:
-  - URL: `/process`
-  - Request Body:
-    ```json
-    {
-      "amount": "<monto>",
-      "currency": "<moneda>"
-    }
-    ```
-- Lamentablemente el sistema de pago EasyMoney no puede procesar datos decimales, en ese caso nos devolverá un error que debemos manejar. Igualmente, maneja todos los casos de error que puedan ocurrir.
-
-#### 2. Pago SuperWalletz
-
-- Deberás integrar el sistema de pago ficticio SuperWalletz con Laravel. Esta es la documentación de la API de SuperWalletz:
-
-- Debes hacer una llamada POST a la siguiente URL:
-  - URL: `/pay`
-  - Request Body:
-    ```json
-    {
-      "amount": "<monto>",
-      "currency": "<moneda>",
-      "callback_url": "<tu_url_para_confirmacion>"
-    }
-    ```
-
-- Al hacer la llamada, este nos devolverá un mensaje "success" con el id de la transacción en la plataforma de pago.
-- Pasados unos segundos, la plataforma de pago nos mandará un webhook con la confirmación de pago a la URL que especificaste en el request body.
-
-### Consideraciones Adicionales
-
-- Se deben guardar todas las transacciones y su estado en la base de datos, independientemente de si fueron exitosas o no.
-- También debemos guardar todas las requests/peticiones realizadas a la plataforma de pago, y también los webhooks que recibimos, para su posterior análisis por parte del equipo de BI.
-- En la carpeta `/PAY-SERVERS` se encuentra un archivo `easy-money.js` y un archivo `super-walletz.js` que son simuladores de los servidores de pago. No debes modificarlos. Para que funcionen correctamente, debes ejecutar los siguientes comandos:
+### Clone the repo and cd into it
 
 ```bash
-npm install
-node easy-money.js # Ejecuta el servidor de Pago EasyMoney
-node super-walletz.js # Ejecuta el servidor de Pago SuperWalletz
+git clone https://github.com/pedroriverove/pedro_rivero_laravel.git
+cd pedro_rivero_laravel
 ```
 
-¡Buena suerte!
+### Install composer dependencies
 
+```bash
+composer install
+```
+
+### Create a copy of your .env file
+
+```bash
+cp .env.example .env
+```
+
+### Set your database credentials in your .env file
+
+Change the following lines in your .env file
+```conf
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=
+DB_DATABASE=
+DB_USERNAME=
+DB_PASSWORD=
+```
+
+### Generate an app encryption key
+
+```bash
+php artisan key:generate
+```
+
+### Migrate the database and seed
+
+```bash
+php artisan migrate
+php artisan db:seed
+```
+
+### Microservice setup and base URL configuration
+
+1.  **Install dependencies:**
+
+    In your project's root directory, run:
+
+    ```bash
+    npm install
+    ```
+
+2.  **Navigate to microservices directory:**
+
+    ```bash
+    cd PAY-SERVERS
+    ```
+
+3.  **Start microservices (in separate terminals):**
+
+    **Terminal 1:**
+    ```bash
+    node easy-money.js
+    ```
+
+    **Terminal 2:**
+    ```bash
+    node super-walletz.js
+    ```
+    
+4.  **Configure base URLs:**
+
+    In your `.env` file, set the following:
+
+    ```conf
+    EASYMONEY_BASE_URI=http://localhost:3000
+    SUPERWALLETZ_BASE_URI=http://localhost:3003
+    ```
+
+    **Ensure that the Easymoney and Superwalletrz microservices are running on ports 3000 and 3003 respectively.**
+
+### Run the server
+
+```bash
+php artisan serve
+```
+
+### Test the API using POSTMAN
+
+You can test the API using the following `curl` command in POSTMAN or any other API testing tool:
+
+```bash
+curl --location 'http://127.0.0.1:8000/api/process' \
+--header 'Accept: application/json' \
+--header 'Content-Type: application/json' \
+--data '{
+    "payment_gateway": "EasyMoney",
+    "amount": 100,
+    "currency": "USD"
+}'
+```
+
+```bash
+curl --location 'http://127.0.0.1:8000/api/process' \
+--header 'Accept: application/json' \
+--header 'Content-Type: application/json' \
+--data '{
+    "payment_gateway": "SuperWalletz",
+    "amount": 100,
+    "currency": "USD"
+}'
+```
+
+```bash
+curl --location 'http://127.0.0.1:8000/api/webhook/superwalletz/{id}' \
+--header 'Accept: application/json' \
+--header 'Content-Type: application/json' \
+--data '{
+    "transaction_id": "{transaction_id}",
+    "status": "success"
+}'
+```

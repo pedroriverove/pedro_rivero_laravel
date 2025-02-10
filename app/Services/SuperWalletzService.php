@@ -16,7 +16,7 @@ class SuperWalletzService
     public function __construct()
     {
         $this->client = new Client([
-            'base_uri' => env('SUPERWALLETZ_BASE_URI', 'http://localhost:3003'),
+            'base_uri' => config('services.super_wallet.base_uri'),
             'timeout' => 10.0,
         ]);
     }

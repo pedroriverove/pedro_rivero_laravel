@@ -35,4 +35,12 @@ return [
         ],
     ],
 
+    'easy_money' => [
+        'base_uri' => env('EASY_MONEY_BASE_URI', 'http://localhost:3000'),
+    ],
+
+    'super_wallet' => [
+        'base_uri' => env('SUPER_WALLET_BASE_URI', 'http://localhost:3003'),
+    ],
+
 ];

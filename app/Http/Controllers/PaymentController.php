@@ -46,12 +46,16 @@ class PaymentController extends Controller
         ]);
 
         try {
-            if ($request->input('payment_gateway') === 'EasyMoney') {
+            $paymentGateway = $request->input('payment_gateway');
+
+            if ($paymentGateway === 'EasyMoney') {
                 $response = $this->easyMoneyService->processPayment($transaction);
+
                 return response()->json($response);
-            } elseif ($request->input('payment_gateway') === 'SuperWalletz') {
+            } elseif ($paymentGateway === 'SuperWalletz') {
                 $callbackUrl = route('webhook.superwalletz', ['transaction_id' => $transaction->id]);
                 $response = $this->superWalletzService->processPayment($transaction, $callbackUrl);
+
                 return response()->json($response);
             }
         } catch (Exception $e) {
@@ -67,9 +71,11 @@ class PaymentController extends Controller
     public function superWalletzWebhook(Request $request, $transaction_id): JsonResponse
     {
         $transaction = Transaction::findOrFail($transaction_id);
+
         try {
             $payload = $request->all();
             $this->superWalletzService->handleWebhook($transaction, $payload);
+
             return response()->json(['message' => 'Webhook recibido y procesado correctamente.']);
         } catch (Exception $e) {
             return response()->json(['message' => 'Error al procesar el webhook', 'error' => $e->getMessage()], 500);

@@ -85,8 +85,8 @@ php artisan db:seed
     In your `.env` file, set the following:
 
     ```conf
-    EASYMONEY_BASE_URI=http://localhost:3000
-    SUPERWALLETZ_BASE_URI=http://localhost:3003
+    EASY_MONEY_BASE_URI=http://localhost:3000
+    SUPER_WALLET_BASE_URI=http://localhost:3003
     ```
 
     **Ensure that the Easymoney and Superwalletrz microservices are running on ports 3000 and 3003 respectively.**

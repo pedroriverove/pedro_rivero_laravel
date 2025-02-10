@@ -17,7 +17,7 @@ class EasyMoneyService
     public function __construct()
     {
         $this->client = new Client([
-            'base_uri' => env('EASYMONEY_BASE_URI', 'http://localhost:3000'),
+            'base_uri' => config('services.easy_money.base_uri'),
             'timeout' => 5.0,
         ]);
     }
@@ -33,6 +33,7 @@ class EasyMoneyService
             if (fmod($transaction->amount, 1) !== 0.00) {
                 throw new Exception('EasyMoney no acepta montos con decimales.');
             }
+
             $payload = [
                 'amount' => $transaction->amount,
                 'currency' => $transaction->currency,
